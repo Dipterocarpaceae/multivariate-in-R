@@ -1,0 +1,72 @@
+```{r}
+# POPULASI SAMA -> DATA BERPASANGAN
+
+data <- matrix(c(
+    3, 3, 5, 4, 5, 2, 4, 2,
+    4, 5, 6, 4, 7, 4, 5, 3,
+    3, 2, 4, 3, 3, 1, 2, 3,
+    3, 4, 6, 5, 6, 3, 3, 4
+), ncol = 4, byrow = FALSE)
+
+data1 <- data[, c(1, 2)]
+data2 <- data[, c(3, 4)]
+```
+```{r}
+D <- data1 - data2
+
+n <- nrow(D)
+p <- ncol(D)
+alfa <- 0.05
+
+satu <- rep(1, n)
+dbar <- 1 / n * t(D) %*% satu
+```
+
+```{r}
+Sd <- cov(D)
+```
+
+```{r}
+# Statistik Hitung
+T2 <- n * t(dbar) %*% solve(Sd) %*% dbar
+```
+```{r}
+# Statistik Uji
+Ftabel <- qf(alfa, p, n - p, lower.tail = FALSE)
+c2 <- (n - 1) * p / (n - p) * Ftabel
+```
+
+```{r}
+if (T2 > c2) print("TOLAK H0") else print("GAGAL TOLAK H0")
+# MINIMAL ADA SATU VARIABEL YANG BERBEDA
+```
+
+```{r}
+# CEK CONFIDENCE INTERVAL - BANTUAN VEKTOR a
+a.d1 <- c(1, 0)
+a.d2 <- c(0, 1)
+c <- sqrt(c2)
+```
+
+```{r}
+# SCI
+d1.LB <- t(a.d1) %*% dbar - c * sqrt(t(a.d1) %*% Sd %*% a.d1 / n)
+d1.UB <- t(a.d1) %*% dbar + c * sqrt(t(a.d1) %*% Sd %*% a.d1 / n)
+SCI.d1 <- c(d1.LB, d1.UB)
+
+d2.LB <- t(a.d2) %*% dbar - c * sqrt(t(a.d2) %*% Sd %*% a.d2 / n)
+d2.UB <- t(a.d2) %*% dbar + c * sqrt(t(a.d2) %*% Sd %*% a.d2 / n)
+SCI.d2 <- c(d2.LB, d2.UB)
+```
+
+```{r}
+# BCI
+t.tabel <- qt(1 - alfa / (2 * p), n - 1)
+d1.LB <- t(a.d1) %*% dbar - t.tabel * sqrt(t(a.d1) %*% Sd %*% a.d1 / n)
+d1.UB <- t(a.d1) %*% dbar + t.tabel * sqrt(t(a.d1) %*% Sd %*% a.d1 / n)
+BCI.d1 <- c(d1.LB, d1.UB)
+
+d2.LB <- t(a.d2) %*% dbar - t.tabel * sqrt(t(a.d2) %*% Sd %*% a.d2 / n)
+d2.UB <- t(a.d2) %*% dbar + t.tabel * sqrt(t(a.d2) %*% Sd %*% a.d2 / n)
+BCI.d2 <- c(d2.LB, d2.UB)
+```

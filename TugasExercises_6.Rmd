@@ -1,0 +1,101 @@
+```{r}
+data <- matrix(c(
+    869, 995, 1056, 1126, 1044, 925, 1172.5, 1408.5, 1028, 1011, 726, 982, 1225, 731, 975.5, 1130.5, 945, 747, 656.5, 919, 751, 774, 941, 751, 767, 813.5, 1289.5, 1096.5, 1083, 1114, 708, 1201,
+    860.5, 875, 930.5, 954, 909, 856.5, 896.5, 1311, 887, 863, 674, 894, 1179, 662, 872.5, 811, 909, 752.5, 659.5, 833, 744, 735, 931, 785, 737.5, 750.5, 1140, 1009, 958, 1046, 669, 925,
+    691, 678, 833, 888, 865, 1059.5, 926, 854, 915, 761, 663, 831, 1037, 662.5, 814, 843, 867.5, 777, 572, 752, 683, 671, 901.5, 789, 724, 711, 904.5, 1076, 918, 1081, 657, 1004.5,
+    601, 659, 826, 728, 839, 797, 766, 986, 735, 657, 583, 640, 905.5, 624, 735, 657, 754, 687.5, 539, 611, 553, 612, 700, 735, 639, 625, 784.5, 983, 746.5, 796, 572.5, 673.5
+), ncol = 4)
+
+# (miu2 + miu4) - (miu1 + miu3)
+# (miu3 + miu4) - (miu1 + miu2)
+# (miu2 + miu3) - (miu1 + miu4)
+
+C <- matrix(c(
+    -1, 1, -1, 1,
+    -1, -1, 1, 1,
+    -1, 1, 1, -1
+), nrow = 3, byrow = TRUE)
+n <- nrow(data)
+q <- ncol(data)
+alpa <- 0.05
+```
+```{r}
+satu <- rep(1, n)
+xbar <- 1 / n * t(data) %*% satu
+S <- cov(data)
+```
+```{r}
+T2 <- n * t(C %*% xbar) %*% solve(C %*% S %*% t(C)) %*% (C %*% xbar)
+```
+
+```{r}
+Ftabel <- qf(1 - alpa, q - 1, n - q + 1)
+c2 <- (n - 1) * (q - 1) / (n - q + 1) * Ftabel
+```
+
+-Daerah Kritis
+Tolak H0 jika T^2 > C^2
+
+```{r}
+if (T2 > c2) {
+    print("Reject H0")
+} else {
+    print("Accept H0")
+}
+```
+
+
+-Keputusan
+Dalam kasus ini, T^2 > C^2 yaitu 153.7275 > 9.40913, maka
+Keputusan : TOLAK H0
+
+-Kesimpulan
+Dengan tingkat signifikansi 5% dan data yang ada, dapat disimpulkan bahwa terdapat minimal satu
+perbedaan nilai cmiu pada hasil tes 2 model psikologi kemampuan numerik.
+
+```{r}
+c <- sqrt(c2)
+# SCI
+c.1 <- C[1, ]
+c.2 <- C[2, ]
+c.3 <- C[3, ]
+
+H0.1.LB <- t(c.1) %*% xbar - c * sqrt(t(c.1) %*% S %*% c.1 / n)
+H0.1.UB <- t(c.1) %*% xbar + c * sqrt(t(c.1) %*% S %*% c.1 / n)
+
+SCI_H0.1 <- c(H0.1.LB, H0.1.UB)
+```
+
+```{r}
+H0.2.LB <- t(c.2) %*% xbar - c * sqrt(t(c.2) %*% S %*% c.2 / n)
+H0.2.UB <- t(c.2) %*% xbar + c * sqrt(t(c.2) %*% S %*% c.2 / n)
+
+SCI_H0.2 <- c(H0.2.LB, H0.2.UB)
+```
+```{r}
+H0.3.LB <- t(c.3) %*% xbar - c * sqrt(t(c.3) %*% S %*% c.3 / n)
+H0.3.UB <- t(c.3) %*% xbar + c * sqrt(t(c.3) %*% S %*% c.3 / n)
+
+SCI_H0.3 <- c(H0.3.LB, H0.3.UB)
+```
+
+```{r}
+t.tabel <- qt(1 - alpa / (2 * q), n - 1)
+H0.1.LB <- t(c.1) %*% xbar - t.tabel * sqrt(t(c.1) %*% S %*% c.1 / n)
+H0.1.UB <- t(c.1) %*% xbar + t.tabel * sqrt(t(c.1) %*% S %*% c.1 / n)
+
+BCI_H0.1 <- c(H0.1.LB, H0.1.UB)
+```
+
+```{r}
+H0.2.LB <- t(c.2) %*% xbar - t.tabel * sqrt(t(c.2) %*% S %*% c.2 / n)
+H0.2.UB <- t(c.2) %*% xbar + t.tabel * sqrt(t(c.2) %*% S %*% c.2 / n)
+
+BCI_H0.2 <- c(H0.2.LB, H0.2.UB)
+```
+```{r}
+H0.3.LB <- t(c.3) %*% xbar - t.tabel * sqrt(t(c.3) %*% S %*% c.3 / n)
+H0.3.UB <- t(c.3) %*% xbar + t.tabel * sqrt(t(c.3) %*% S %*% c.3 / n)
+
+BCI_H0.3 <- c(H0.3.LB, H0.3.UB)
+```

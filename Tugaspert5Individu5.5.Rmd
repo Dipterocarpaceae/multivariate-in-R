@@ -1,0 +1,38 @@
+```{r}
+# Exercises 5.5
+library(car)
+xbar <- matrix(c(0.564, 0.603), nrow = 2)
+S <- matrix(c(0.0144, 0.0117, 0.0117, 0.0146), nrow = 2)
+# Sinvers <- solve(S)
+Sinvers <- matrix(c(203.018, -163.391, -163.391, 200.228), nrow = 2)
+```
+```{r}
+miu <- matrix(c(0.55, 0.60), nrow = 2)
+alfa <- 0.05
+n <- 42
+p <- length(xbar)
+```
+
+```{r}
+c <- (n - 1) * p / (n - p) * qf(alfa, p, n - p, lower.tail = FALSE)
+
+T2 <- n * t((xbar - miu)) %*% Sinvers %*% (xbar - miu)
+
+if (T2 > c) print("Reject H0") else print("Accept H0")
+```
+
+```{r}
+# SALAH KEKNYA
+
+# library(car)
+# alpha <- 0.05
+# tconst <- sqrt((p / n) * ((n - 1) / (n - p)) * qf(1 - alpha, p, n - p))
+# id <- c(1, 2)
+# plot(ellipse(center = xbar[id], shape = S[id, id], radius = tconst, draw = F),
+#     type = "n", xlab = "mpg", ylab = "disp"
+# )
+# lines(ellipse(center = xbar[id], shape = S[id, id], radius = tconst, lwd = 3), xlab = "mpg", ylab = "disp")
+# points(0.55, 0.56, col = "red", pch = 16)
+# text(0.555, 0.565, expression(mu[0]))
+# text(xbar[1] + 0.005, xbar[2], expression(bar(x)))
+```

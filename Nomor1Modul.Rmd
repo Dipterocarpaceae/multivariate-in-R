@@ -1,0 +1,57 @@
+```{r}
+# INPUT
+miu <- c(3.56, 19.75, 75.67)
+
+# INPUT
+# KONSENTRASI DI SINI
+x1 <- c(10.23, 3.41, 24.67, 1.85, 2.09, 2.46, 1.10, 2.82, 5.88, 2.07, 3.98, 2.15, 1.53)
+x2 <- c(32.29, 10.31, 0, 10.84, 19.64, 16.93, 23.88, 7.72, 12.07, 23.17, 17.78, 33.05, 11.46)
+x3 <- c(69.96, 78.62, 80.60, 74.76, 77.77, 84.06, 80.55, 86.46, 68.51, 82.73, 80.03, 86.78, 75.85)
+
+# INPUT
+# KONSENTRASI DI SINI
+data <- cbind(x1, x2, x3)
+
+# INPUT JIKA SIGMA DIKETAHUI
+sigma <- 0
+```
+
+```{r}
+n <- nrow(data)
+p <- ncol(data)
+xbar <- colMeans(data)
+
+# INPUT
+alfa <- 0.05
+```
+
+```{r}
+# INPUT - URGENT SEKALI DI SINI
+Sigma_dik <- FALSE
+
+if (Sigma_dik == FALSE) {
+    S <- cov(data)
+    Sinvers <- solve(S)
+
+    # Stat Uji
+    C2 <- (n - 1) * p / (n - p) * qf(alfa, p, n - p, lower.tail = FALSE)
+
+    # Stat Hitung
+    T2 <- n * t((xbar - miu)) %*% Sinvers %*% (xbar - miu)
+} else {
+    S <- sigma
+    Sinvers <- solve(S)
+
+    # Stat Uji
+    C2 <- qchisq(alfa, p, lower.tail = FALSE)
+
+    # Stat Hitung
+    T2 <- n * t((xbar - miu)) %*% Sinvers %*% (xbar - miu)
+}
+
+C2
+T2
+
+# Keputusan
+if (T2 > C2) print("Tolak H0") else print("Gagal Tolak H0")
+```

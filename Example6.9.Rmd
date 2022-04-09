@@ -1,0 +1,71 @@
+```{r}
+g <- 3
+n1 <- 3
+n2 <- 2
+n3 <- 3
+
+n <- n1 + n2 + n3
+```
+
+```{r}
+x11 <- c(9, 6, 9)
+x12 <- c(3, 2, 7)
+x21 <- c(0, 2)
+x22 <- c(4, 0)
+x31 <- c(3, 1, 2)
+x32 <- c(8, 9, 7)
+X1 <- cbind(x11, x12)
+X2 <- cbind(x21, x22)
+X3 <- cbind(x31, x32)
+
+X <- rbind(X1, X2, X3)
+```
+
+```{r}
+p <- ncol(X)
+satu <- rep(1, n)
+satu1 <- rep(1, n1)
+satu2 <- rep(1, n2)
+satu3 <- rep(1, n3)
+```
+
+```{r}
+Xbar <- 1 / n * satu %*% t(satu) %*% X
+Xbar1 <- 1 / n1 * satu1 %*% t(satu1) %*% X1
+Xbar2 <- 1 / n2 * satu2 %*% t(satu2) %*% X2
+Xbar3 <- 1 / n3 * satu3 %*% t(satu3) %*% X3
+Xbar_l <- rbind(Xbar1, Xbar2, Xbar3)
+```
+
+```{r}
+Tau <- Xbar_l - Xbar
+E <- X - Xbar_l
+```
+
+```{r}
+# stat uji
+alpha <- 0.01
+Ftabel <- qf(1 - alpha, 2 * (g - 1), 2 * (n - g - 1))
+```
+
+```{r}
+# stat hitung
+SStr <- t(Tau) %*% Tau
+B <- SStr
+
+SSres <- t(E) %*% E
+W <- SSres
+
+lamda <- det(W) / det(B + W)
+
+F <- (n - g - 1) / (g - 1) * ((1 - sqrt(lamda)) / sqrt(lamda))
+```
+
+
+```{r}
+if (F > Ftabel) {
+    print("Reject H0")
+} else {
+    print("Accept H0")
+}
+```

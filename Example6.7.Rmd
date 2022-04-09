@@ -1,0 +1,57 @@
+```{r}
+g <- 3
+n1 <- 3
+n2 <- 2
+n3 <- 3
+
+n <- n1 + n2 + n3
+```
+
+```{r}
+x1 <- c(9,6,9)
+x2 <- c(0,2)
+x3 <- c(3,1,2)
+x <- c(x1,x2,x3)
+```
+
+```{r}
+p <- 1
+satu <- rep(1,n)
+satu1 <- rep(1,n1)
+satu2 <- rep(1,n2)
+satu3 <- rep(1,n3)
+```
+
+```{r}
+xbar <- 1/n*satu%*%t(satu)%*%x
+xbar1 <- 1/n1*satu1%*%t(satu1)%*%x1
+xbar2 <- 1/n2*satu2%*%t(satu2)%*%x2
+xbar3 <- 1/n3*satu3%*%t(satu3)%*%x3
+xbar_l <- c(xbar1,xbar2,xbar3)
+```
+
+```{r}
+tau <- xbar_l - xbar
+e <- x - xbar_l
+```
+
+```{r}
+#stat uji
+alpha <- 0.01
+Ftabel <- qf(1-alpha, g-1, n-g)
+```
+
+```{r}
+#stat hitung
+SStr <- t(tau)%*%tau
+SSres <- t(e)%*%e
+F <- (SStr/(g-1))/(SSres/(n-g))
+```
+
+```{r}
+if (F > Ftabel) {
+    print("Reject H0")
+} else {
+    print("Accept H0")
+}
+```

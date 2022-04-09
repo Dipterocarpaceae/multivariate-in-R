@@ -1,0 +1,71 @@
+```{r}
+data <- matrix(c(
+    426, 253, 359, 432, 405, 324, 310, 326, 375, 286, 349, 429, 348, 412, 347, 434, 364, 420, 397,
+    609, 236, 433, 431, 426, 438, 312, 326, 447, 286, 382, 410, 377, 473, 326, 458, 367, 395, 556,
+    556, 392, 349, 522, 513, 507, 410, 350, 547, 403, 473, 488, 447, 472, 455, 637, 432, 508, 645,
+    600, 395, 357, 600, 513, 539, 456, 504, 548, 422, 497, 547, 514, 446, 468, 524, 469, 531, 625
+), ncol = 4)
+C <- matrix(c(-1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, 1), nrow = 3)
+n <- nrow(data)
+q <- ncol(data)
+alpa <- 0.05
+```
+```{r}
+satu <- rep(1, n)
+xbar <- 1 / n * t(data) %*% satu
+S <- cov(data)
+```
+```{r}
+T2 <- n * t(c %*% xbar) %*% solve(c %*% S %*% t(c)) %*% (c %*% xbar)
+```
+
+```{r}
+Ftabel <- qf(1 - alpa, q - 1, n - q + 1)
+c2 <- (n - 1) * (q - 1) / (n - q + 1) * Ftabel
+```
+```{r}
+c <- sqrt(c2)
+# SCI
+c.1 <- C[1, ]
+c.2 <- C[2, ]
+c.3 <- C[3, ]
+
+H0.1.LB <- t(c.1) %*% xbar - c * sqrt(t(c.1) %*% S %*% c.1 / n)
+H0.1.UB <- t(c.1) %*% xbar + c * sqrt(t(c.1) %*% S %*% c.1 / n)
+
+SCI_H0.1 <- c(H0.1.LB, H0.1.UB)
+```
+
+```{r}
+H0.2.LB <- t(c.2) %*% xbar - c * sqrt(t(c.2) %*% S %*% c.2 / n)
+H0.2.UB <- t(c.2) %*% xbar + c * sqrt(t(c.2) %*% S %*% c.2 / n)
+
+SCI_H0.2 <- c(H0.2.LB, H0.2.UB)
+```
+```{r}
+H0.3.LB <- t(c.3) %*% xbar - c * sqrt(t(c.3) %*% S %*% c.3 / n)
+H0.3.UB <- t(c.3) %*% xbar + c * sqrt(t(c.3) %*% S %*% c.3 / n)
+
+SCI_H0.3 <- c(H0.3.LB, H0.3.UB)
+```
+
+```{r}
+t.tabel <- qt(1 - alpa / (2 * q), n - 1)
+H0.1.LB <- t(c.1) %*% xbar - t.tabel * sqrt(t(c.1) %*% S %*% c.1 / n)
+H0.1.UB <- t(c.1) %*% xbar + t.tabel * sqrt(t(c.1) %*% S %*% c.1 / n)
+
+BCI_H0.1 <- c(H0.1.LB, H0.1.UB)
+```
+
+```{r}
+H0.2.LB <- t(c.2) %*% xbar - t.tabel * sqrt(t(c.2) %*% S %*% c.2 / n)
+H0.2.UB <- t(c.2) %*% xbar + t.tabel * sqrt(t(c.2) %*% S %*% c.2 / n)
+
+BCI_H0.2 <- c(H0.2.LB, H0.2.UB)
+```
+```{r}
+H0.3.LB <- t(c.3) %*% xbar - t.tabel * sqrt(t(c.3) %*% S %*% c.3 / n)
+H0.3.UB <- t(c.3) %*% xbar + t.tabel * sqrt(t(c.3) %*% S %*% c.3 / n)
+
+BCI_H0.3 <- c(H0.3.LB, H0.3.UB)
+```

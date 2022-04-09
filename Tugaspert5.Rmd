@@ -1,0 +1,45 @@
+```{r}
+xbar <- matrix(c(95.52, 164.38, 55.69, 93.39, 17.98, 31.13), nrow = 6)
+xbar
+```
+```{r}
+n <- 61
+n
+
+p <- length(xbar)
+```
+```{r}
+alfa <- 1 - 0.95
+alfa
+```
+
+```{r}
+# chisq.test(xbar)
+```
+
+```{r}
+S <- matrix(c(
+    3266.46, 1343.97, 731.54, 1175.50, 162.68, 238.37,
+    1343.97, 721.91, 324.25, 537.35, 80.17, 117.73,
+    731.54, 324.25, 179.28, 281.17, 39.15, 56.80,
+    1175.50, 537.35, 281.17, 474.98, 63.73, 94.85,
+    162.68, 80.17, 39.15, 63.73, 9.95, 13.88,
+    238.37, 117.73, 56.80, 94.85, 13.88, 21.26
+), nrow = 6)
+```
+
+```{r}
+# simultan confidence interval
+miubawah <- array()
+miuatas <- array()
+for (val in 1:6)
+{
+    miubawah[val] <- xbar[val, 1] - sqrt(qchisq(p = alfa, df = p, lower.tail = FALSE)) * sqrt(S[val, val] / n)
+    miuatas[val] <- xbar[val, 1] + sqrt(qchisq(p = alfa, df = p, lower.tail = FALSE)) * sqrt(S[val, val] / n)
+
+    print(val)
+    print(miubawah[val])
+    print(miuatas[val])
+    print("")
+}
+```

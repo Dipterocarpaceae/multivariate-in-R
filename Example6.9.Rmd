@@ -8,6 +8,30 @@ n <- n1 + n2 + n3
 ```
 
 ```{r}
+# install.packages("dplyr")
+# install.packages("mvnormtest")
+# install.packages("DescTools")
+# install.packages("rstatix")
+# install.packages("MVTests")
+# install.packages("magrittr")
+# install.packages("heplots")
+# install.packages("HHG")
+# install.packages("MANOVA.RM")
+
+# library(dplyr)
+# library(mvnormtest)
+# library(DescTools)
+# library(rstatix)
+# library(MVTests)
+# library(magrittr)
+# library(heplots)
+# library(HHG)
+# library(MANOVA.RM)
+
+
+```
+
+```{r}
 x11 <- c(9, 6, 9)
 x12 <- c(3, 2, 7)
 x21 <- c(0, 2)
@@ -68,4 +92,36 @@ if (F > Ftabel) {
 } else {
     print("Accept H0")
 }
+```
+
+
+```{r}
+t.tabel <- qt(1 - alfa / (p*g*(g-1)), n - g)
+BF.LCI.AB <- colMeans(Xbar1)[1] - colMeans(Xbar2)[1] - (t.tabel * sqrt(((1/n1)+(1/n2))*W[1,1]/(n-g)))
+BF.UCI.AB <- colMeans(Xbar1)[1] - colMeans(Xbar2)[1] + (t.tabel * sqrt(((1/n1)+(1/n2))*W[1,1]/(n-g)))
+BCI.AB <- c(BF.LCI.AB, BF.UCI.AB)
+
+BF.LCI.AC <- colMeans(Xbar1)[1] - colMeans(Xbar3)[1] - (t.tabel * sqrt(((1/n1)+(1/n2))*W[1,1]/(n-g)))
+BF.UCI.AC <- colMeans(Xbar1)[1] - colMeans(Xbar3)[1] + (t.tabel * sqrt(((1/n1)+(1/n2))*W[1,1]/(n-g)))
+BCI.AC <- c(BF.LCI.AC, BF.UCI.AC)
+
+BF.LCI.BC <- colMeans(Xbar2)[1] - colMeans(Xbar3)[1] - (t.tabel * sqrt(((1/n1)+(1/n2))*W[1,1]/(n-g)))
+BF.UCI.BC <- colMeans(Xbar2)[1] - colMeans(Xbar3)[1] + (t.tabel * sqrt(((1/n1)+(1/n2))*W[1,1]/(n-g)))
+BCI.BC <- c(BF.LCI.BC, BF.UCI.BC)
+
+
+
+
+
+BF.LCI.AB <- colMeans(Xbar1)[2] - colMeans(Xbar2)[2] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BF.UCI.AB <- colMeans(Xbar1)[2] - colMeans(Xbar2)[2] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BCI.AB <- c(BF.LCI.AB, BF.UCI.AB)
+
+BF.LCI.AC <- colMeans(Xbar1)[2] - colMeans(Xbar3)[2] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BF.UCI.AC <- colMeans(Xbar1)[2] - colMeans(Xbar3)[2] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BCI.AC <- c(BF.LCI.AC, BF.UCI.AC)
+
+BF.LCI.BC <- colMeans(Xbar2)[2] - colMeans(Xbar3)[2] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BF.UCI.BC <- colMeans(Xbar2)[2] - colMeans(Xbar3)[2] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BCI.BC <- c(BF.LCI.BC, BF.UCI.BC)
 ```

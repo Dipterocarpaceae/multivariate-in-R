@@ -38,7 +38,6 @@ c2 <- (n - 1) * p / (n - p) * Ftabel
 
 ```{r}
 if (T2 > c2) print("TOLAK H0") else print("GAGAL TOLAK H0")
-# MINIMAL ADA SATU VARIABEL YANG BERBEDA
 ```
 
 ```{r}

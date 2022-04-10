@@ -3,8 +3,9 @@ g <- 3
 n1 <- 3
 n2 <- 5
 n3 <- 4
-
 n <- n1 + n2 + n3
+
+alfa <- 0.05
 ```
 
 ```{r}
@@ -43,9 +44,7 @@ E <- X - Xbar_l
 ```
 
 ```{r}
-# stat uji
-alpha <- 0.01
-Ftabel <- qf(1 - alpha, 2 * (g - 1), 2 * (n - g - 1))
+
 ```
 
 ```{r}
@@ -58,9 +57,32 @@ W <- SSres
 
 lamda <- det(W) / det(B + W)
 
-F <- (n - g - 1) / (g - 1) * ((1 - sqrt(lamda)) / sqrt(lamda))
-```
+# F <- (n - g - 1) / (g - 1) * ((1 - sqrt(lamda)) / sqrt(lamda))
 
+# Untuk mencari F atau Stat Hitung dengan beberapa kasus p dan g
+
+# Jika p = 1 dan g >= 2
+if (p == 1 && g >= 2) {
+    # stat uji
+    Ftabel <- qf(1 - alfa, (g - 1), (n - g))
+    F <- (n - g) / (g - 1) * ((1 - lamda) / lamda)
+
+    # Jika p = 2 dan g >= 2
+} else if (p == 2 && g >= 2) {
+    Ftabel <- qf(1 - alfa, 2 * (g - 1), 2 * (n - g - 1))
+    F <- (n - g - 1) / (g - 1) * ((1 - sqrt(lamda)) / sqrt(lamda))
+
+    # Jika p >= 1 dan g = 2
+} else if (p >= 1 && g == 2) {
+    Ftabel <- qf(1 - alfa, p, (n - p - 1))
+    F <- (n - p - 1) / p * (1 - lamda) / lamda
+
+    # Jika p >= 1 dan g = 3
+} else if (p >= 1 && g == 3) {
+    Ftabel <- qf(1 - alfa, 2 * p, 2 * (n - p - 2))
+    F <- (n - p - 2) / p * ((1 - sqrt(lamda)) / sqrt(lamda))
+}
+```
 
 ```{r}
 if (F > Ftabel) {
@@ -68,4 +90,70 @@ if (F > Ftabel) {
 } else {
     print("Accept H0")
 }
+```
+
+```{r}
+# SCI
+
+# EFIKASI
+c <- sqrt(Ftabel)
+SCI.LCI.P1.AB <- colMeans(Xbar1)[1] - colMeans(Xbar2)[1] - (c * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+SCI.UCI.P1.AB <- colMeans(Xbar1)[1] - colMeans(Xbar2)[1] + (c * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+SCI.P1.AB <- c(SCI.LCI.P1.AB, SCI.UCI.P1.AB)
+
+SCI.LCI.P1.AC <- colMeans(Xbar1)[1] - colMeans(Xbar3)[1] - (c * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+SCI.UCI.P1.AC <- colMeans(Xbar1)[1] - colMeans(Xbar3)[1] + (c * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+SCI.P1.AC <- c(SCI.LCI.P1.AC, SCI.UCI.P1.AC)
+
+SCI.LCI.P1.BC <- colMeans(Xbar2)[1] - colMeans(Xbar3)[1] - (c * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+SCI.UCI.P1.BC <- colMeans(Xbar2)[1] - colMeans(Xbar3)[1] + (c * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+SCI.P1.BC <- c(SCI.LCI.P1.BC, SCI.UCI.P1.BC)
+
+
+
+# EFEKTIVITAS
+SCI.LCI.P2.AB <- colMeans(Xbar1)[2] - colMeans(Xbar2)[2] - (c * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+SCI.UCI.P2.AB <- colMeans(Xbar1)[2] - colMeans(Xbar2)[2] + (c * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+SCI.P2.AB <- c(SCI.LCI.P2.AB, SCI.UCI.P2.AB)
+
+SCI.LCI.P2.AC <- colMeans(Xbar1)[2] - colMeans(Xbar3)[2] - (c * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+SCI.UCI.P2.AC <- colMeans(Xbar1)[2] - colMeans(Xbar3)[2] + (c * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+SCI.P2.AC <- c(SCI.LCI.P2.AC, SCI.UCI.P2.AC)
+
+SCI.LCI.P2.BC <- colMeans(Xbar2)[2] - colMeans(Xbar3)[2] - (c * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+SCI.UCI.P2.BC <- colMeans(Xbar2)[2] - colMeans(Xbar3)[2] + (c * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+SCI.P2.BC <- c(SCI.LCI.P2.BC, SCI.UCI.P2.BC)
+```
+
+```{r}
+# BCI
+
+# EFIKASI
+t.tabel <- qt(1 - alfa / (p * g * (g - 1)), n - g)
+BF.LCI.P1.AB <- colMeans(Xbar1)[1] - colMeans(Xbar2)[1] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+BF.UCI.P1.AB <- colMeans(Xbar1)[1] - colMeans(Xbar2)[1] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+BCI.P1.AB <- c(BF.LCI.P1.AB, BF.UCI.P1.AB)
+
+BF.LCI.P1.AC <- colMeans(Xbar1)[1] - colMeans(Xbar3)[1] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+BF.UCI.P1.AC <- colMeans(Xbar1)[1] - colMeans(Xbar3)[1] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+BCI.P1.AC <- c(BF.LCI.P1.AC, BF.UCI.P1.AC)
+
+BF.LCI.P1.BC <- colMeans(Xbar2)[1] - colMeans(Xbar3)[1] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+BF.UCI.P1.BC <- colMeans(Xbar2)[1] - colMeans(Xbar3)[1] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[1, 1] / (n - g)))
+BCI.P1.BC <- c(BF.LCI.P1.BC, BF.UCI.P1.BC)
+
+
+
+# EFEKTIVITAS
+BF.LCI.P2.AB <- colMeans(Xbar1)[2] - colMeans(Xbar2)[2] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BF.UCI.P2.AB <- colMeans(Xbar1)[2] - colMeans(Xbar2)[2] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BCI.P2.AB <- c(BF.LCI.P2.AB, BF.UCI.P2.AB)
+
+BF.LCI.P2.AC <- colMeans(Xbar1)[2] - colMeans(Xbar3)[2] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BF.UCI.P2.AC <- colMeans(Xbar1)[2] - colMeans(Xbar3)[2] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BCI.P2.AC <- c(BF.LCI.P2.AC, BF.UCI.P2.AC)
+
+BF.LCI.P2.BC <- colMeans(Xbar2)[2] - colMeans(Xbar3)[2] - (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BF.UCI.P2.BC <- colMeans(Xbar2)[2] - colMeans(Xbar3)[2] + (t.tabel * sqrt(((1 / n1) + (1 / n2)) * W[2, 2] / (n - g)))
+BCI.P2.BC <- c(BF.LCI.P2.BC, BF.UCI.P2.BC)
 ```

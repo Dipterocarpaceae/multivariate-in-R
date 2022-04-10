@@ -1,0 +1,78 @@
+```{r}
+# Sigma = V^1/2 * ro * V^1/2
+
+# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+M1 <- c(124.5, 38.1, 76.2, 192.75, 53.65, 250.3)
+V1 <- c(384.3, 68.2, 121.1, 1000.2, 322.4, 470.2)
+M2 <- c(129.3, 31.7, 87.4, 236.6, 44.25, 280.2)
+V2 <- c(687.8, 51.7, 110.9, 792.6, 173.7, 1253.7)
+
+ro1 <- matrix(c(
+    1, 0.13, 0.38, 0.04, -0.05, 0.2,
+    0.13, 1, 0.11, 0.1, -0.43, 0.04,
+    0.38, 0.11, 1, -0.11, 0, -0.02,
+    0.04, 0.1, -0.11, 1, -0.04, -0.01,
+    -0.05, -0.43, 0, -0.04, 1, -0.34,
+    0.2, 0.04, -0.02, -0.01, -0.34, 1
+), ncol = 6, byrow = FALSE)
+
+ro2 <- matrix(c(
+    1, 0.37, -0.19, 0.1, 0, 0.47,
+    0.37, 1, 0.04, -0.23, -0.37, 0.22,
+    -0.19, 0.04, 1, 0.15, -0.06, -0.3,
+    0.1, -0.23, 0.15, 1, 0.02, 0.13,
+    0, -0.37, -0.06, 0.02, 1, 0.25,
+    0.47, 0.22, -0.3, 0.13, 0.25, 1
+), ncol = 6, byrow = FALSE)
+```
+```{r}
+n1 <- 20
+n2 <- 20
+
+p <- ncol(ro1)
+alfa <- 0.05
+```
+
+```{r}
+Cov1 <- diag(sqrt(V1)) %*% ro1 %*% diag(sqrt(V1))
+Cov2 <- diag(sqrt(V2)) %*% ro2 %*% diag(sqrt(V2))
+```
+
+```{r}
+# Stat Uji
+Ftabel <- qf(1 - alfa, p, n1 + n2 - p - 1)
+c2 <- (n1 + n2 - 2) * p / (n1 + n2 - p - 1) * Ftabel
+
+s_pool <- (1 / (n1 + n2 - 2)) * ((n1 - 1) * Cov1 + (n2 - 1) * Cov2)
+
+# Stat Hitung
+T2 <- (n1 * n2 / (n1 + n2)) * (t(M1 - M2)) %*% solve(s_pool) %*% (M1 - M2)
+```
+
+```{r}
+if (T2 > c2) {
+    print("Reject H0")
+} else {
+    print("Accept H0")
+}
+```
+```{r}
+# Karena T2 > C2, maka dengan tingkat signifikansi 5%,
+# dapat dikatakan bahwa terdapat perbedaan hasil prikotes antara siswa laki-laki dan perempuan
+```
+
+
+
+
+```{r}
+# BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+# Sebuah teori mengatakan bahwa laki-laki memiliki keunggulan dalam hal spasial dan perempuan memiliki keunggulan analog verbal.
+# Untuk membuktikannya, digunakan Confidence Interval Bonferroni
+
+
+# Hal Spasial
+newAlfa <- alfa / (2 * p)
+
+xbar <- M1 - M2
+a <- c(0, 0, 0, 0, 1, 0)
+```

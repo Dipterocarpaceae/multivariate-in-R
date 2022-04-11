@@ -1,5 +1,5 @@
 ```{r}
-# POPULASI SAMA -> DATA BERPASANGAN
+# POPULASI SAMA -> DATA BERPASANGAN - PAIRED
 
 data <- matrix(c(
     3, 3, 5, 4, 5, 2, 4, 2,

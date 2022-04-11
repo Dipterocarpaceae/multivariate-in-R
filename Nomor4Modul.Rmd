@@ -1,4 +1,6 @@
 ```{r}
+# MANOVA ONE WAY
+library(readxl)
 g <- 3
 n1 <- 3
 n2 <- 5
@@ -64,21 +66,25 @@ lamda <- det(W) / det(B + W)
 # Jika p = 1 dan g >= 2
 if (p == 1 && g >= 2) {
     # stat uji
+    print("KASUS 1")
     Ftabel <- qf(1 - alfa, (g - 1), (n - g))
     F <- (n - g) / (g - 1) * ((1 - lamda) / lamda)
 
     # Jika p = 2 dan g >= 2
 } else if (p == 2 && g >= 2) {
+    print("KASUS 2")
     Ftabel <- qf(1 - alfa, 2 * (g - 1), 2 * (n - g - 1))
     F <- (n - g - 1) / (g - 1) * ((1 - sqrt(lamda)) / sqrt(lamda))
 
     # Jika p >= 1 dan g = 2
 } else if (p >= 1 && g == 2) {
+    print("KASUS 3")
     Ftabel <- qf(1 - alfa, p, (n - p - 1))
     F <- (n - p - 1) / p * (1 - lamda) / lamda
 
     # Jika p >= 1 dan g = 3
 } else if (p >= 1 && g == 3) {
+    print("KASUS 4")
     Ftabel <- qf(1 - alfa, 2 * p, 2 * (n - p - 2))
     F <- (n - p - 2) / p * ((1 - sqrt(lamda)) / sqrt(lamda))
 }

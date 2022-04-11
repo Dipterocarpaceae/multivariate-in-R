@@ -1,5 +1,6 @@
 ```{r}
 # Sigma = V^1/2 * ro * V^1/2
+# VEKTOR RATA-RATA DUA POPULASI
 
 # AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 M1 <- c(124.5, 38.1, 76.2, 192.75, 53.65, 250.3)
@@ -75,4 +76,16 @@ newAlfa <- alfa / (2 * p)
 
 xbar <- M1 - M2
 a <- c(0, 0, 0, 0, 1, 0)
+
+as.numeric(t(a) %*% xbar) + c(-1, 1) * qt(1 - newAlfa, n1 + n2 - 2) * sqrt(as.numeric(t(a) %*% s_pool %*% a) * ((1 / n1) + (1 / n2)))
+```
+
+```{r}
+# Hal Analog Verbal
+newAlfa <- alfa / (2 * p)
+
+xbar <- M2 - M1
+a <- c(0, 0, 0, 1, 0, 0)
+
+as.numeric(t(a) %*% xbar) + c(-1, 1) * qt(1 - newAlfa, n1 + n2 - 2) * sqrt(as.numeric(t(a) %*% s_pool %*% a) * ((1 / n1) + (1 / n2)))
 ```

@@ -1,0 +1,36 @@
+```{r}
+library(dplyr)
+library(mvnormtest)
+library(DescTools)
+library(rstatix)
+library(MVTests)
+library(magrittr)
+library(heplots)
+library(HHG)
+library(MANOVA.RM)
+```
+
+```{r}
+# UJI NORMALITAS DENGAN SHAPIRO WILK
+# H0: Data berdistribusi multivariat normal
+# H1: Data tidak berdistribusi multivariat normal
+
+mshapiro.test(t(data1))
+mshapiro.test(t(data2))
+```
+
+```{r}
+df <- data.frame(
+    antivirus = c(rep("XYZ", 8), rep("PQR", 8)),
+    branded = c(3, 3, 5, 4, 5, 2, 4, 2, 3, 2, 4, 3, 3, 1, 2, 3),
+    local = c(4, 5, 6, 4, 7, 4, 5, 3, 3, 4, 6, 5, 6, 3, 3, 4)
+)
+```
+
+```{r}
+# UJI KESAMAAN VARIANS
+# H0: S_1 = S_2
+# H1: S_1 != S_2
+
+boxM(df[, -1], df$antivirus)
+```

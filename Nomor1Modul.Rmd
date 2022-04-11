@@ -1,4 +1,5 @@
 ```{r}
+# INTERFACES - VEKTOR RATA-RATA SATU POPULASI
 # INPUT
 miu <- c(3.56, 19.75, 75.67)
 

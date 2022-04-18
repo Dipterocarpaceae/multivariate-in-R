@@ -1,0 +1,98 @@
+```{r}
+# Sigma = V^1/2 * ro * V^1/2
+# VEKTOR RATA-RATA DUA POPULASI
+
+# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+M1 <- c(80.05, 85.06, 89.99)
+V1 <- c(0.176, 0.170, 0.247)
+M2 <- c(81.05, 83.03, 89.96)
+V2 <- c(0.157, 0.157, 0.213)
+
+
+ro1 <- matrix(c(
+    1, 0.82, 0.06,
+    0.82, 1, -0.02,
+    0.06, -0.02, 1
+), ncol = 3, byrow = FALSE)
+
+ro2 <- matrix(c(
+    1, 0.74, 0.43,
+    0.74, 1, 0.24,
+    0.43, 0.24, 1
+), ncol = 3, byrow = FALSE)
+```
+```{r}
+n1 <- 30
+n2 <- 20
+
+p <- ncol(ro1)
+alfa <- 0.05
+```
+
+```{r}
+Cov1 <- diag(sqrt(V1)) %*% ro1 %*% diag(sqrt(V1))
+Cov2 <- diag(sqrt(V2)) %*% ro2 %*% diag(sqrt(V2))
+```
+
+```{r}
+# Stat Uji
+Ftabel <- qf(1 - alfa, p, n1 + n2 - p - 1)
+c2 <- (n1 + n2 - 2) * p / (n1 + n2 - p - 1) * Ftabel
+
+s_pool <- (1 / (n1 + n2 - 2)) * ((n1 - 1) * Cov1 + (n2 - 1) * Cov2)
+
+# Stat Hitung
+T2 <- (n1 * n2 / (n1 + n2)) * (t(M1 - M2)) %*% solve(s_pool) %*% (M1 - M2)
+```
+
+```{r}
+if (T2 > c2) {
+    print("Reject H0")
+} else {
+    print("Accept H0")
+}
+```
+```{r}
+# Karena T2 > C2, maka dengan tingkat signifikansi 5%,
+# dapat dikatakan bahwa terdapat perbedaan hasil prikotes antara siswa laki-laki dan perempuan
+```
+
+
+
+
+```{r}
+# BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+# Sebuah teori mengatakan bahwa laki-laki memiliki keunggulan dalam hal spasial dan perempuan memiliki keunggulan analog verbal.
+# Untuk membuktikannya, digunakan Confidence Interval Bonferroni
+
+
+# Hal Spasial
+newAlfa <- alfa / (2 * p)
+
+xbar <- M1 - M2
+a <- c(1, 0, 0)
+b <- c(0, 1, 0)
+c <- c(0, 0, 1)
+
+# AAAA
+t(a) %*% xbar - sqrt(c2) * sqrt(t(a) %*% s_pool %*% a * ((1 / n1) + (1 / n2)))
+t(a) %*% xbar + sqrt(c2) * sqrt(t(a) %*% s_pool %*% a * ((1 / n1) + (1 / n2)))
+
+# BBBB
+t(b) %*% xbar - sqrt(c2) * sqrt(t(b) %*% s_pool %*% a * ((1 / n1) + (1 / n2)))
+t(b) %*% xbar + sqrt(c2) * sqrt(t(b) %*% s_pool %*% a * ((1 / n1) + (1 / n2)))
+
+# CCCC
+t(c) %*% xbar - sqrt(c2) * sqrt(t(c) %*% s_pool %*% a * ((1 / n1) + (1 / n2)))
+t(c) %*% xbar + sqrt(c2) * sqrt(t(c) %*% s_pool %*% a * ((1 / n1) + (1 / n2)))
+```
+
+```{r}
+# Hal Analog Verbal
+newAlfa <- alfa / (2 * p)
+
+xbar <- M2 - M1
+a <- c(0, 0, 0, 1, 0, 0)
+
+as.numeric(t(a) %*% xbar) + c(-1, 1) * qt(1 - alfa, n1 + n2 - 2) * sqrt(as.numeric(t(a) %*% s_pool %*% a) * ((1 / n1) + (1 / n2)))
+```

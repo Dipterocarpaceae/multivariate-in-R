@@ -1,0 +1,75 @@
+```{r}
+Sigma <- matrix(c(6, 3, 3, 4), 2, 2)
+eig <- eigen(Sigma)
+```
+
+```{r}
+proporsi_1 <- eig$values[1] / sum(eig$values)
+proporsi_2 <- eig$values[2] / sum(eig$values)
+```
+
+```{r}
+# Matrik korelasi
+
+V <- diag(sqrt(diag(Sigma)))
+R <- solve(V) %*% Sigma %*% solve(V)
+
+eig.r <- eigen(R)
+
+proporsi_r1 <- eig.r$values[1] / sum(eig.r$values)
+proporsi_r2 <- eig.r$values[2] / sum(eig.r$values)
+```
+```{r}
+# Membangkitkan data
+
+Mu <- c(2, 5)
+
+library(mvtnorm)
+X <- rmvnorm(30, Mu, Sigma)
+```
+
+```{r}
+S <- cov(X)
+eig <- eigen(S)
+proporsi_1 <- eig$values[1] / sum(eig$values)
+proporsi_2 <- eig$values[2] / sum(eig$values)
+```
+
+```{r}
+y1 <- eig$vectors[1, 1] * X[, 1] + eig$vectors[2, 1] * X[, 2]
+y2 <- eig$vectors[1, 2] * X[, 1] + eig$vectors[2, 2] * X[, 2]
+
+Databaru <- cbind(X, y1, y2)
+```
+
+```{r}
+# Korelasi
+V <- diag(sqrt(diag(S)))
+R <- solve(V) %*% S %*% solve(V)
+
+eig.r <- eigen(R)
+
+proporsi_r1 <- eig.r$values[1] / sum(eig.r$values)
+proporsi_r2 <- eig.r$values[2] / sum(eig.r$values)
+
+y1.r.stand <- eig.r$vectors[1, 1] * Z[, 1] + eig.r$vectors[2, 1] * Z[, 2]
+y2.r.stand <- eig.r$vectors[1, 2] * Z[, 1] + eig.r$vectors[2, 2] * Z[, 2]
+
+Data <- cbind(Databaru, y1.r.stand, y2.r.stand)
+```
+
+```{r}
+# Standarisasi
+
+z1 <- (X[, 1] - mean(X[, 1])) / sqrt(S[1, 1])
+z2 <- (X[, 2] - mean(X[, 2])) / sqrt(S[2, 2])
+
+z <- cbind(z1, z2)
+
+cov.z <- cov(z)
+R
+```
+
+```{r}
+# skor
+```

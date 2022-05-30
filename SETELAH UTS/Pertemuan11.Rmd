@@ -1,0 +1,26 @@
+```{r}
+Sigma <- matrix(c(5, 4, 4, 5), 2, 2)
+eig <- eigen(Sigma)
+```
+
+```{r}
+Sig <- eig$values[1] * eig$vectors[, 1] %*% t(eig$vectors[, 1]) + eig$values[2] * eig$vectors[, 2] %*% t(eig$vectors[, 2])
+```
+
+```{r}
+Sig_i <- 1 / eig$values[1] * eig$vectors[, 1] %*% t(eig$vectors[, 1]) + 1 / eig$values[2] * eig$vectors[, 2] %*% t(eig$vectors[, 2])
+solve(Sigma)
+```
+
+```{r}
+Sd_i <- 1 / sqrt(eig$values[1]) * eig$vectors[, 1] %*% t(eig$vectors[, 1]) + 1 / sqrt(eig$values[2]) * eig$vectors[, 2] %*% t(eig$vectors[, 2])
+```
+
+```{r}
+# TERBUKTI IDENTITAS
+Sd_i %*% Sigma %*% Sd_i
+```
+
+```{r}
+solve(eig$vectors[1]) %*% eig$vectors[1]
+```

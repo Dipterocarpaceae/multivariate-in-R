@@ -1,0 +1,108 @@
+```{r}
+R <- matrix(c(
+    1, 0.4, 0.5, 0.6,
+    0.4, 1, 0.3, 0.4,
+    0.5, 0.3, 1, 0.2,
+    0.6, 0.4, 0.2, 1
+), nrow = 4, byrow = TRUE)
+```
+
+```{r}
+R11 <- R[1:2, 1:2]
+R12 <- R[1:2, 3:4]
+R21 <- t(R12)
+R22 <- R[3:4, 3:4]
+
+library(psych)
+```
+
+```{r}
+eigR11 <- eigen(R11)
+eigR22 <- eigen(R22)
+
+R11_I_sqrt <- 0
+i <- NULL
+for (i in 1:length(R11)) {
+    R11_I_sqrt <- R11_I_sqrt + 1 / sqrt(eigR11$values[i]) * eigR11$vectors[, i] %*% t(eigR11$vectors[, i])
+}
+
+R22_I_sqrt <- 0
+i <- NULL
+for (i in 1:length(R11)) {
+    R22_I_sqrt <- R22_I_sqrt + 1 / sqrt(eigR22$values[i]) * eigR22$vectors[, i] %*% t(eigR22$vectors[, i])
+}
+```
+
+```{r}
+M <- R11_I_sqrt %*% R12 %*% solve(R22) %*% R21 %*% R11_I_sqrt
+M2 <- R22_I_sqrt %*% R21 %*% solve(R11) %*% R12 %*% R22_I_sqrt
+
+Rho2 <- eigen(M)$values
+Rho <- sqrt(Rho2) # INI BESARNYA KORELASI KANONIK
+E <- eigen(M)$vectors
+e1 <- E[, 1]
+e2 <- E[, 2]
+```
+
+```{r}
+# U1
+a1 <- R11_I_sqrt %*% e1
+a2 <- R11_I_sqrt %*% e2
+# U1 <- a1[1] * X1_1 + a1[2] * X2_1
+# U2 <- a2[1] * X1_1 + a2[2] * X2_1
+
+A <- cbind(a1, a2)
+A_I <- solve(A)
+```
+```{r}
+# HARUS SAMA DENGAN 1
+Var_U1 <- t(a1) %*% R11 %*% a1
+Var_U2 <- t(a2) %*% R11 %*% a2
+
+p <- 2
+tr(A_I[1, ] %*% t(A_I[1, ]) + A_I[2, ] %*% t(A_I[2, ]))
+tr(A_I[1, ] %*% t(A_I[1, ])) / p
+tr(A_I[2, ] %*% t(A_I[2, ])) / p
+```
+
+```{r}
+# V1 dan V2
+# f1 <- R22_I_sqrt %*% R21 %*% R11_I_sqrt %*% e1
+
+f1 <- eigen(M2)$vectors[, 1]
+f2 <- eigen(M2)$vectors[, 2]
+b1 <- R22_I_sqrt %*% f1
+b2 <- R22_I_sqrt %*% f2
+
+# V1 <- b1[1] * X1_2 + b1[2] * X2_2
+# V2 <- b2[1] * X1_2 + b2[2] * X2_2
+```
+
+```{r}
+# HARUS SAMA DENGAN 1
+Var_V1 <- t(b1) %*% R22 %*% b1
+Var_V2 <- t(b2) %*% R22 %*% b2
+
+B <- cbind(b1, b2)
+B_I <- solve(B)
+
+tr(B_I[1, ] %*% t(B_I[1, ]) + B_I[2, ] %*% t(B_I[2, ]))
+tr(B_I[1, ] %*% t(B_I[1, ])) / p # Proporsi variasi yang bisa dijelaskan oleh V1 dari set varibel kedua
+tr(B_I[2, ] %*% t(B_I[2, ])) / p # Proporsi variasi yang bisa dijelaskan oleh V2 dari set varibel kedua
+```
+
+```{r}
+n <- 30
+p <- 2
+q <- 2
+
+# uji rho1 = 0, rho2 = 0
+st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[1]^2) * (1 - Rho[2]^2))
+st.uji <- qchisq(0.95, p * q)
+
+# TOLAK HO dengan alfa 0.5
+
+# uji rho1 != 0 rho2 = 0
+st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log(1 - Rho[2]^2)
+st.uji <- qchisq(0.95, (p - 1) * (q - 1))
+```

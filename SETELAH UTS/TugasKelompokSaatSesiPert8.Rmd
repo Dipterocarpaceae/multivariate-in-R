@@ -1,0 +1,33 @@
+```{r}
+R <- matrix(c(
+    1, 0.9, 0.74, 0.64,
+    0.9, 1, 0.33, 0.74,
+    0.74, 0.33, 1, 0.66,
+    0.64, 0.74, 0.66, 1
+), 4, 4)
+
+eig.r <- eigen(R)
+
+proporsi_r1 <- eig.r$values[1] / sum(eig.r$values)
+proporsi_r2 <- eig.r$values[2] / sum(eig.r$values)
+proporsi_r3 <- eig.r$values[3] / sum(eig.r$values)
+proporsi_r4 <- eig.r$values[4] / sum(eig.r$values)
+
+# Variabel 1 sudah >= 0.75
+```
+
+```{r}
+# b
+Y1 <- -0.5459384 * X1 - 0.5004768 * X2 - 0.4461757 * X3 - 0.5023958 * X4
+```
+
+```{r}
+# c
+# JAWABAN
+# Untuk mendapatkan korelasi variabel pada komponen utama memerlukan matriks kovarians, sedangkan pada soalnya hanya diberikan matriks korelasi sehingga dengan matriks korelasi tidak bisa didapatkan matriks kovarians
+
+# Sigma <- eig.r$values[1] * eig.r$vectors[, 1] %*% t(eig.r$vectors[, 1]) + eig.r$values[2] * eig.r$vectors[, 2] %*% t(eig.r$vectors[, 2]) + eig.r$values[3] * eig.r$vectors[, 3] %*% t(eig.r$vectors[, 3]) + eig.r$values[4] * eig.r$vectors[, 4] %*% t(eig.r$vectors[, 4])
+
+
+# ro.y11x1 <- eig.r$vectors[1,1]*sqrt(3.01878551)/sqrt(Sigma[1,1])
+```

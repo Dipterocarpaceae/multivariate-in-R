@@ -1,0 +1,144 @@
+```{r}
+library(readxl)
+data <- read_excel("E:/+KULIAH ONLINE TK 3 S2 2021s2022/ANALISIS PEUBAH GANDA (KS)/TUGAS AKHIR/Data2020SiapOlahv2.xlsx")
+```
+```{r}
+data <- data.frame(data)
+X_1 <- data[, c(8, 9, 10)]
+X_2 <- data[, -c(1, 8, 9, 10)]
+data <- cbind(X_1, X_2)
+```
+```{r}
+n <- 34
+p <- 3
+q <- 6
+```
+```{r}
+data_standarisasi <- round(scale(data), 4)
+R <- cor(data_standarisasi)
+```
+
+```{r}
+R11 <- R[1:3, 1:3]
+R12 <- R[1:3, 4:9]
+R21 <- t(R12)
+R22 <- R[4:9, 4:9]
+
+library(psych)
+```
+
+```{r}
+eigR11 <- eigen(R11)
+eigR22 <- eigen(R22)
+
+R11_I_sqrt <- 0
+i <- NULL
+for (i in 1:p) {
+    R11_I_sqrt <- R11_I_sqrt + 1 / sqrt(eigR11$values[i]) * eigR11$vectors[, i] %*% t(eigR11$vectors[, i])
+}
+
+R22_I_sqrt <- 0
+i <- NULL
+for (i in 1:q) {
+    R22_I_sqrt <- R22_I_sqrt + 1 / sqrt(eigR22$values[i]) * eigR22$vectors[, i] %*% t(eigR22$vectors[, i])
+}
+```
+
+```{r}
+M <- R11_I_sqrt %*% R12 %*% solve(R22) %*% R21 %*% R11_I_sqrt
+M2 <- R22_I_sqrt %*% R21 %*% solve(R11) %*% R12 %*% R22_I_sqrt
+
+Rho2 <- eigen(M)$values
+Rho <- sqrt(Rho2) # INI BESARNYA KORELASI KANONIK
+E <- eigen(M)$vectors
+e1 <- E[, 1]
+e2 <- E[, 2]
+e3 <- E[, 3]
+```
+
+```{r}
+# U1
+a1 <- R11_I_sqrt %*% e1
+a2 <- R11_I_sqrt %*% e2
+a3 <- R11_I_sqrt %*% e3
+# U1 <- a1[1] * X1_1 + a1[2] * X2_1
+# U2 <- a2[1] * X1_1 + a2[2] * X2_1
+
+A <- cbind(a1, a2, a3)
+A_I <- solve(A)
+```
+```{r}
+# HARUS SAMA DENGAN 1
+Var_U1 <- t(a1) %*% R11 %*% a1
+Var_U2 <- t(a2) %*% R11 %*% a2
+Var_U3 <- t(a3) %*% R11 %*% a3
+
+tr(A_I[1, ] %*% t(A_I[1, ]) + A_I[2, ] %*% t(A_I[2, ]) + A_I[3, ] %*% t(A_I[3, ]))
+tr(A_I[1, ] %*% t(A_I[1, ])) / p
+tr(A_I[2, ] %*% t(A_I[2, ])) / p
+tr(A_I[3, ] %*% t(A_I[3, ])) / p
+```
+
+```{r}
+# V1 dan V2
+# f1 <- R22_I_sqrt %*% R21 %*% R11_I_sqrt %*% e1
+
+E2 <- eigen(M2)$vectors
+f1 <- E2[, 1]
+f2 <- E2[, 2]
+f3 <- E2[, 3]
+f4 <- E2[, 4]
+f5 <- E2[, 5]
+f6 <- E2[, 6]
+b1 <- R22_I_sqrt %*% f1
+b2 <- R22_I_sqrt %*% f2
+b3 <- R22_I_sqrt %*% f3
+b4 <- R22_I_sqrt %*% f4
+b5 <- R22_I_sqrt %*% f5
+b6 <- R22_I_sqrt %*% f6
+
+# V1 <- b1[1] * X1_2 + b1[2] * X2_2
+# V2 <- b2[1] * X1_2 + b2[2] * X2_2
+```
+
+```{r}
+# HARUS SAMA DENGAN 1
+Var_V1 <- t(b1) %*% R22 %*% b1
+Var_V2 <- t(b2) %*% R22 %*% b2
+Var_V3 <- t(b3) %*% R22 %*% b3
+Var_V4 <- t(b4) %*% R22 %*% b4
+Var_V5 <- t(b5) %*% R22 %*% b5
+Var_V6 <- t(b6) %*% R22 %*% b6
+
+B <- cbind(b1, b2, b3, b4, b5, b6)
+B_I <- solve(B)
+
+tr(B_I[1, ] %*% t(B_I[1, ]) + B_I[2, ] %*% t(B_I[2, ]) + B_I[3, ] %*% t(B_I[3, ]) + B_I[4, ] %*% t(B_I[4, ]) + B_I[5, ] %*% t(B_I[5, ]) + B_I[6, ] %*% t(B_I[6, ]))
+tr(B_I[1, ] %*% t(B_I[1, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V1 dari set varibel kedua
+tr(B_I[2, ] %*% t(B_I[2, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V2 dari set varibel kedua
+tr(B_I[3, ] %*% t(B_I[3, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V3 dari set varibel kedua
+tr(B_I[4, ] %*% t(B_I[4, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V4 dari set varibel kedua
+tr(B_I[5, ] %*% t(B_I[5, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V5 dari set varibel kedua
+tr(B_I[6, ] %*% t(B_I[6, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V6 dari set varibel kedua
+```
+
+```{r}
+
+# uji rho1 = 0, rho2 = 0, rho3 = 0
+st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[1]^2) * (1 - Rho[2]^2) * (1 - Rho[3]^2))
+st.uji <- qchisq(0.95, p * q)
+
+# TOLAK HO dengan alfa 0.5, MINIMAL ADA SATU RHO YANG TIDAK SAMA DENGAN NOL ATAU KORELASINYA SIGNIFIKAN
+
+# CARI YANG MANA
+# uji rho1 != 0, rho2 = 0, rho3 = 0
+k <- 1
+st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[2]^2) * (1 - Rho[3]^2))
+st.uji <- qchisq(0.95, (p - k) * (q - k))
+
+# GAGAL TOLAK H0
+# # uji rho1 != 0, rho2 != 0, rho3 = 0
+# k <- 2
+# st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[3]^2))
+# st.uji <- qchisq(0.95, (p - k) * (q - k))
+```

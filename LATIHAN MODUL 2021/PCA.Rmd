@@ -1,0 +1,37 @@
+```{r}
+R <- matrix(c(
+    1, 0.9, 0.74, 0.64,
+    0.9, 1, 0.33, 0.74,
+    0.74, 0.33, 1, 0.66,
+    0.64, 0.74, 0.66, 1
+), 4, 4)
+
+eig.r <- eigen(R)
+eig.r$values
+hasil <- eig.r$vectors[1, 1]^2 + eig.r$vectors[2, 1]^2 + eig.r$vectors[3, 1]^2 + eig.r$vectors[4, 1]^2
+hasil <- eig.r$vectors[1, 2]^2 + eig.r$vectors[2, 2]^2 + eig.r$vectors[3, 2]^2 + eig.r$vectors[4, 2]^2
+
+proporsi_r1 <- eig.r$values[1] / sum(eig.r$values)
+proporsi_r2 <- eig.r$values[2] / sum(eig.r$values)
+proporsi_r3 <- eig.r$values[3] / sum(eig.r$values)
+proporsi_r4 <- eig.r$values[4] / sum(eig.r$values)
+
+# A. GUNAKAN 2 KOMPONEN UTAMA
+```
+
+```{r}
+# B PERSAMAAN
+y1 <- -0.5459384 * X1 - 0.5004768 * X2 - 0.4461757 * X3 - 0.5023958 * X4
+y2 <- 0.08698788 * X1 + 0.62861750 * X2 - 0.77203698 * X3 - 0.03510062 * X4
+
+# Pada komponen pertama, variabel x1, x2, dan x4 merupakan var yang penting atau dominan pada komponen pertama dengan nilai loading lebih dari 0.5
+# Pada komponen kedua, variabel x2 dan x3 merupakan variabel yang penting
+```
+
+```{r}
+# C. Korelasi dari variabel yang memberikan kontribusi terbesar dengan komponen utamanya
+# Variabel yang memberikan kontribusi dominan terhadap komponen utamanya adalah X2 dan X3
+
+ro.y21.x2 <- eig.r$vectors[2, 2] * sqrt(eig.r$value[2]) / sqrt(R[2, 2])
+ro.y21.x3 <- eig.r$vectors[2, 3] * sqrt(eig.r$value[2]) / sqrt(R[3, 3])
+```

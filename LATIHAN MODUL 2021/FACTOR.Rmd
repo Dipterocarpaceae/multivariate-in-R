@@ -1,0 +1,11 @@
+```{r}
+install.packages("factanal")
+library(factanal)
+```
+```{r}
+factanal() # FACTANAL SUDAH PAKAI ROTASI VARIMAX
+```
+
+```{r}
+
+```

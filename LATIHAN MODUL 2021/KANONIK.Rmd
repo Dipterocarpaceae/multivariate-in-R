@@ -1,0 +1,137 @@
+
+```{r}
+# LANGKAH 1
+R <- matrix(c(
+    1, 0.56, 0.68, 0.72,
+    0.56, 1, 0.55, 0.58,
+    0.68, 0.55, 1, 0.98,
+    0.72, 0.58, 0.98, 1
+), 4, 4)
+```
+
+```{r}
+# LANGKAH 2
+R11 <- R[1:2, 1:2]
+R12 <- R[1:2, 3:4]
+R21 <- t(R12)
+R22 <- R[3:4, 3:4]
+
+library(psych)
+```
+
+```{r}
+# LANGKAH 3
+eigR11 <- eigen(R11)
+eigR22 <- eigen(R22)
+
+R11_I_sqrt <- 0
+i <- NULL
+for (i in 1:p) {
+    R11_I_sqrt <- R11_I_sqrt + 1 / sqrt(eigR11$values[i]) * eigR11$vectors[, i] %*% t(eigR11$vectors[, i])
+}
+
+R22_I_sqrt <- 0
+i <- NULL
+for (i in 1:q) {
+    R22_I_sqrt <- R22_I_sqrt + 1 / sqrt(eigR22$values[i]) * eigR22$vectors[, i] %*% t(eigR22$vectors[, i])
+}
+```
+
+```{r}
+# LANGKAH 4
+M <- R11_I_sqrt %*% R12 %*% solve(R22) %*% R21 %*% R11_I_sqrt
+M2 <- R22_I_sqrt %*% R21 %*% solve(R11) %*% R12 %*% R22_I_sqrt
+
+Rho2 <- eigen(M)$values
+
+# INI BESARNYA KORELASI KANONIK
+Rho <- sqrt(Rho2)
+```
+```{r}
+# LANGKAH 5
+E <- eigen(M)$vectors
+e1 <- E[, 1]
+e2 <- E[, 2]
+```
+
+```{r}
+# LANGKAH 6
+# U1
+a1 <- R11_I_sqrt %*% e1
+a2 <- R11_I_sqrt %*% e2
+
+# PERSAMAAN VARIABEL KANONIK
+U1 <- a1[1] * X1_1 + a1[2] * X2_1
+U2 <- a2[1] * X1_1 + a2[2] * X2_1
+
+A <- cbind(a1, a2)
+A_I <- solve(A)
+```
+```{r}
+# HARUS SAMA DENGAN 1
+Var_U1 <- t(a1) %*% R11 %*% a1
+Var_U2 <- t(a2) %*% R11 %*% a2
+
+tr(A_I[1, ] %*% t(A_I[1, ]) + A_I[2, ] %*% t(A_I[2, ]))
+tr(A_I[1, ] %*% t(A_I[1, ])) / p
+tr(A_I[2, ] %*% t(A_I[2, ])) / p
+```
+
+```{r}
+# V1 dan V2
+# f1 <- R22_I_sqrt %*% R21 %*% R11_I_sqrt %*% e1
+
+# LANGKAH 7
+E2 <- eigen(M2)$vectors
+f1 <- E2[, 1]
+f2 <- E2[, 2]
+b1 <- R22_I_sqrt %*% f1
+b2 <- R22_I_sqrt %*% f2
+
+# PERSAMAAN VARIABEL KANONIK
+V1 <- b1[1] * X1_2 + b1[2] * X2_2
+V2 <- b2[1] * X1_2 + b2[2] * X2_2
+```
+
+```{r}
+# LANGKAH 8
+# KORELASI KANONIK PERTAMA
+R.UX.11 <- R11 %*% a1
+R.VX.22 <- R22 %*% b1
+
+R.UY.12 <- R12 %*% a1
+R.VY.21 <- R21 %*% b1
+```
+
+```{r}
+# HARUS SAMA DENGAN 1
+Var_V1 <- t(b1) %*% R22 %*% b1
+Var_V2 <- t(b2) %*% R22 %*% b2
+B <- cbind(b1, b2)
+B_I <- solve(B)
+
+tr(B_I[1, ] %*% t(B_I[1, ]) + B_I[2, ] %*% t(B_I[2, ]) + B_I[3, ] %*% t(B_I[3, ]) + B_I[4, ] %*% t(B_I[4, ]) + B_I[5, ] %*% t(B_I[5, ]) + B_I[6, ] %*% t(B_I[6, ]))
+tr(B_I[1, ] %*% t(B_I[1, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V1 dari set varibel pertama
+tr(B_I[2, ] %*% t(B_I[2, ])) / q # Proporsi variasi yang bisa dijelaskan oleh V2 dari set varibel kedua
+```
+
+```{r}
+
+# uji rho1 = 0, rho2 = 0, rho3 = 0
+st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[1]^2) * (1 - Rho[2]^2) * (1 - Rho[3]^2))
+st.uji <- qchisq(0.95, p * q)
+
+# TOLAK HO dengan alfa 0.5, MINIMAL ADA SATU RHO YANG TIDAK SAMA DENGAN NOL ATAU KORELASINYA SIGNIFIKAN
+
+# CARI YANG MANA
+# uji rho1 != 0, rho2 = 0, rho3 = 0
+k <- 1
+st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[2]^2) * (1 - Rho[3]^2))
+st.uji <- qchisq(0.95, (p - k) * (q - k))
+
+# GAGAL TOLAK H0
+# # uji rho1 != 0, rho2 != 0, rho3 = 0
+# k <- 2
+# st.hit <- -(n - 1 - 1 / 2 * (p + q + 1)) * log((1 - Rho[3]^2))
+# st.uji <- qchisq(0.95, (p - k) * (q - k))
+```

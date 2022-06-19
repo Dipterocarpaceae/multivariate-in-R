@@ -1,0 +1,62 @@
+```{r}
+ybarHM <- matrix(c(204.4, 406.6), 2, 1)
+ybarM <- matrix(c(130, 355), 2, 1)
+
+r1.12 <- 0.5492
+r2.12 <- 0.4925
+
+S1.1 <- 270.4
+S2.1 <- 117.6
+
+sigma11.1 <- S1.1^2
+sigma22.1 <- S2.1^2
+
+sigma12.1 <- S1.1 * S2.1 * r1.12
+sigma21.1 <- sigma12.1
+
+S_atau_Cov.1 <- matrix(c(sigma11.1, sigma12.1, sigma21.1, sigma22.1), 2, 2)
+```
+
+```{r}
+S1.2 <- 236.6
+S2.2 <- 92.9
+
+sigma11.2 <- S1.2^2
+sigma22.2 <- S2.2^2
+
+sigma12.2 <- S1.2 * S2.2 * r2.12
+sigma21.2 <- sigma12.2
+
+S_atau_Cov.2 <- matrix(c(sigma11.2, sigma12.2, sigma21.2, sigma22.2), 2, 2)
+```
+```{r}
+n1 <- 60
+n2 <- 45
+```
+```{r}
+S_pooled <- ((n1 - 1) / ((n1 - 1) + (n2 - 1))) * S_atau_Cov.1 + ((n2 - 1) / ((n1 - 1) + (n2 - 1))) * S_atau_Cov.2
+
+a <- solve(S_pooled) %*% (ybarHM - ybarM)
+
+# Z <- a[1,1]*X1 + a[2,1]*X2
+```
+```{r}
+X1 <- 150
+X2 <- 400
+
+Z <- a[1, 1] * X1 + a[2, 1] * X2
+```
+```{r}
+h <- 1 / 2 * t((ybarHM - ybarM)) %*% solve(S_pooled) %*% (ybarHM - ybarM)
+```
+
+```{r}
+# PENGELOMPOKAN MENGGUNAKAN PENDEKATAN FISHER, KITA DAPAT MENGELOMPOKKAN X
+# KE KELOMPOK 1 JIKA Z >= H, DAN BEGITU SEBALIKYA
+
+if (Z >= h) {
+    print("masuk kelompok 1")
+} else {
+    print("masuk kelompok 2")
+}
+```

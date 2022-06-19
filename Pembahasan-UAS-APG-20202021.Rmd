@@ -1,0 +1,237 @@
+---
+title: "Pembahasan UAS APG 2020/2021"
+author: "Tim Modul 61"
+date: "5/22/2022"
+output: word_document
+---
+
+# Nomor 1
+
+Seiring dengan meningkatnya kasus COVID-19 yang semakin mengkhawatirkan, sebuah unit riset meneliti faktor-faktor yang perlu diwaspadai oleh kepala daerah. Dari hasil survei sosial ekonomi di suatu wilayah provinsi diambil 4 variabel yang diasumsikan mempengaruhi angka kasus COVID-19 yaitu kepadatan penduduk (X1), Rasio urban-rural (X2), Rasio luas lantai rumah perkapita (X3), Angka mobilitas ulang-alik (X4). 
+```{r}
+matR<-matrix(data=c(1,0.9,0.74,0.64,0.9,1,0.33,0.74,0.74,0.33,1,0.66,0.64,0.74,0.66,1),4,4)
+colnames(matR)<-c("X1","X2","X3","X4")
+rownames(matR)<-c("X1","X2","X3","X4")
+matR
+```
+
+```{r}
+prcompcor<-function(cor){
+  cor<-cor
+  p<-ncol(cor)
+  eig<-eigen(cor)$values
+  eigvec<-eigen(cor)$vectors
+  std<-sqrt(eig)
+  #meanvec<-colMeans(data)
+  vartot<-p
+  prop_var<-eig/vartot
+  cum_prob<-cumsum(prop_var)
+  
+  prcomp_name<-rep(0,ncol(cor))
+    for ( i in 1:ncol(cor)){
+       prcomp_name[i]<-paste("comp",i,sep=".")
+  }
+  loadings<-data.frame(colnames(cor),round(eigvec,5))
+  colnames(loadings)<-c("variabel",prcomp_name)
+  importancevar<-data.frame(rbind(eig,prop_var,cum_prob))
+  rownames(importancevar)<-c("Varians","Proportion of Variance","Cumulative Proportion")
+  colnames(importancevar)<-prcomp_name
+  scree<-plot(prop_var,type="o",ylab="Proporsi Varians yang dapat dijelaskan",main="Scree Plot No 1")
+  result<-list(importancevar,loadings,scree)
+  names(result)<-c("Importance of components:","Loadings: ","scree plot")
+  return(result)
+}
+```
+
+```{r}
+result <- prcompcor(matR)
+result
+```
+```{r}
+eigen.value<-eigen(matR)$values
+eigen.vec<-eigen(matR)$vectors
+
+r22 = (eigen.vec[2,2]*sqrt(eigen.value[2]))/sqrt(matR[2,2])
+r23 = (eigen.vec[3,2]*sqrt(eigen.value[2]))/sqrt(matR[2,2])
+
+r22
+r23
+```
+Korelasi dari variabel yang memberikan kontribusi terbesar dengan komponen utamanya adalah variabe Rasio urban-rural (X2)
+
+
+# Nomor 2
+
+Sebuah LSM di bidang lingkungan melakukan survey untuk menilai kualitas kelayakan tinggal di suatu lingkungan. Survey dilakukan terhadap 329 lingkungan di suatu provinsi. Semua variabel kecuali X2 dan X4 memiliki makna nilai semakin tinggi semakin baik kondisinya. LSM tersebut ingin mengelompokkan kesembilan variabel tersebut berdasarkan faktor yang mempengaruhinya. 
+
+```{r}
+# kommunality var x2
+round((0.164^2+0.788^2+0.214^2),3)
+# uniqueness var x4
+round((1-0.994),3)
+# l3 var x6
+round(sqrt(0.462-(0.59^2+0.179^2)),3)
+# uniqueness var x7
+round((1-.995),3)
+# l2 var x9
+round(sqrt(0.545-(0^2+0.714^2)),3)
+# communality var x9
+(1-0.455)
+# cumulative variance faktor 
+0.464+0.177
+```
+
+# Nomor 3
+
+Kondisi perekonomian yang fluktuatif cenderung akan membuat labil bagi ketahanan ekonomi rumah tangga (ruta), khususnya pada rumah tangga hampir miskin. Suatu studi yang mempelajari kemiskinan rumah tangga akan dilakukan dengan pendekatan pada variabel konsumsi, yaitu konsumsi pangan dan non pangan pada rumah tangga miskin dan hampir miskin di suatu wilayah. Dari sampel acak terpilih pada kedua kelompok rumah tangga sebanyak 60 ruta hampir miskin dan 45 ruta miskin.
+```{r}
+ybarHM<-matrix(c(204.4,406.6),nrow=2,ncol=1)
+ybarM<-matrix(c(130,355),2,1)
+ybarHM
+ybarM
+```
+
+```{r}
+s12HM<-0.5492*270.4*117.6
+SHM<-matrix(c(270.4^2,s12HM,s12HM,117.6^2 ),2,2)
+
+s12M<-0.4925*236.6*92.9
+SM<-matrix(c(236.6^2,s12M,s12M,92.9^2),2,2)
+ 
+SHM
+SM
+```
+
+```{r}
+n1<-60
+n2<-45
+SPL<-((n1-1)*SHM +(n2-1)*SM)/(n1+n2-2)
+SPL
+```
+
+```{r}
+a<-solve(SPL)%*%(ybarHM-ybarM)
+a
+```
+# Nilai batas
+```{r}
+xh<-
+h<-(1/2)*t(ybarHM-ybarM)%*%solve(SPL)%*%(ybarHM+ybarM)
+h
+```
+# Nilai Z
+```{r}
+Z=(0.0001980263*(150))+(0.0041954185*(400))
+Z
+```
+
+
+# Nomor 4
+
+Dewasa ini, kehadiran Big Data menjadi arus besar dalam melengkapi data
+official statistics. Salah satu yang dilakukan adalah harmonisasi data remote sensing dengan data kewilayahan berbasis administratif. Dalam rangka itu, sebuah grup riset melakukan analisis hubungan antara hasil remote sensing dengan data Potensi Desa (PODES) di suatu wilayah provinsi. Data Remote Sensing yang digunakan adalah Normalized Build-up Index (X1) dan Night light intensity (X2), sedangkan data PODES yang digunakan adalah dan Rasio keluarga Pertanian (Y1) dan Rasio keluarga pengguna listrik PLN (Y2). 
+
+```{r}
+xbar = c(0.3,1)
+ybar = c(0.4,0.9)
+
+R = matrix(c(1,.56,.68,.72,
+             .56,1,.55,.58,
+             .68,.55,1,.98,
+             .72,.58,.98,1),4,4)
+R11 = R[1:2,1:2]
+R12 = R[1:2,3:4]
+R21 = R[3:4,1:2]
+R22 = R[3:4,3:4]
+```
+
+```{r}
+library(expm)
+R11.inv.sqrt = solve(sqrtm(R11))
+R22.inv.sqrt = solve(sqrtm(R22))
+
+M1 = R11.inv.sqrt%*%R12%*%solve(R22)%*%R21%*%R11.inv.sqrt
+M2 = R22.inv.sqrt%*%R21%*%solve(R11)%*%R12%*%R22.inv.sqrt
+
+M1
+M2
+```
+## Menghitung korelasi kanonik
+```{r}
+eigen.M1 = eigen(M1)
+eigen.M2 = eigen(M2)
+
+rho.sqr = eigen.M1$value
+rho = sqrt(rho.sqr)
+rho
+```
+# Eigen vektor M1 dan M2 untuk mencari e dan f
+```{r}
+e1 = eigen.M1$vectors[,1]
+e2 = eigen.M1$vectors[,2]
+
+f1 = eigen.M2$vectors[,1]
+f2 = eigen.M2$vectors[,2]
+```
+
+# Menghitung koefisien persamaan variabel kanonik
+```{r}
+a1 = e1%*%R11.inv.sqrt
+b1 = f1%*%R22.inv.sqrt
+
+a2 = e2%*%R11.inv.sqrt
+b2 = f2%*%R22.inv.sqrt
+
+A = matrix(c(a1,a2),2,2)
+B = matrix(c(b1,b2),2,2)
+
+A
+B
+```
+# Menghitung korelasi variabel kanonik pertama 
+```{r}
+R.UX.11 = a1%*%R11
+R.VX.22 = b1%*%R22
+
+R.UX.12 = a1%*%R12
+R.VX.21 = b1%*%R21
+
+R.UX.11
+R.UX.12
+R.VX.21
+R.VX.22
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
